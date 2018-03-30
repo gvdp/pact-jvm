@@ -104,6 +104,16 @@ class JsonReporter implements VerifierReporter {
   void warnStateChangeIgnored(String state, ProviderInfo providerInfo, ConsumerInfo consumerInfo) { }
 
   @Override
+  void missingStateChangeMethod(String state) {
+    jsonData.execution.last().interactions.last().verification = [
+            result: FAILED,
+            cause: [
+                    message: "No Annotated Methods Found For State Change ${state}"
+            ]
+    ]
+  }
+
+  @Override
   @SuppressWarnings('ParameterCount')
   void stateChangeRequestFailedWithException(String state, ProviderInfo providerInfo, ConsumerInfo consumerInfo,
                                              boolean isSetup, Exception e, boolean printStackTrace) {

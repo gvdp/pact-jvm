@@ -38,12 +38,12 @@ public abstract class BaseTarget implements TestClassAwareTarget {
    * {@inheritDoc}
    */
   @Override
-  public abstract void testInteraction(final String consumerName, final Interaction interaction, PactSource source);
+  public abstract void testInteraction(final String consumerName, final Interaction interaction, PactSource source, ProviderVerifier verifier);
 
   protected abstract ProviderInfo getProviderInfo(PactSource source);
 
-  protected abstract ProviderVerifier setupVerifier(Interaction interaction, ProviderInfo provider,
-                                                    ConsumerInfo consumer);
+  public abstract ProviderVerifier setupVerifier(Interaction interaction, PactSource source,
+          String consumerName);
 
   protected void setupReporters(ProviderVerifier verifier, String name, String description) {
     String reportDirectory = "target/pact/reports";

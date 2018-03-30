@@ -99,6 +99,11 @@ class MarkdownReporter implements VerifierReporter {
   }
 
   @Override
+  void missingStateChangeMethod(String state) {
+    writer.println "&nbsp;&nbsp;&nbsp;&nbsp;<span style='color: red'>Missing State Change Method - $state</span>  "
+  }
+
+  @Override
   void warnStateChangeIgnoredDueToInvalidUrl(String state, ProviderInfo providerInfo, boolean isSetup,
                                              Object stateChangeHandler) {
     writer.println '&nbsp;&nbsp;&nbsp;&nbsp;<span style=\'color: yellow\'>WARNING: State Change ignored as there is ' +

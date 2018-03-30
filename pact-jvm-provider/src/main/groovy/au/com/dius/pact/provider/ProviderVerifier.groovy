@@ -206,6 +206,10 @@ class ProviderVerifier extends ProviderVerifierBase {
     reporters.each { it.stateForInteraction(state, provider, consumer, isSetup) }
   }
 
+  void reportMissingStateChangeMethod(String state) {
+    reporters.each { it.missingStateChangeMethod(state)}
+  }
+
   boolean verifyResponseFromProvider(ProviderInfo provider, Interaction interaction, String interactionMessage,
                                      Map failures,
                                      ProviderClient client) {

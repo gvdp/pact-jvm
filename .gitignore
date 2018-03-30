@@ -31,3 +31,5 @@ pkgdiff_reports/
 
 out/
 
+!/pact-jvm-provider-junit/src/main/kotlin/au/com/dius/pact/provider/junit/target/
+!/pact-jvm-provider-junit/src/main/java/au/com/dius/pact/provider/junit/target/

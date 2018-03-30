@@ -28,10 +28,9 @@ open class AmqpTarget @JvmOverloads constructor(val packagesToScan: List<String>
   /**
    * {@inheritDoc}
    */
-  override fun testInteraction(consumerName: String, interaction: Interaction, source: PactSource) {
+  override fun testInteraction(consumerName: String, interaction: Interaction, source: PactSource, verifier: ProviderVerifier) {
     val provider = getProviderInfo(source)
     val consumer = ConsumerInfo(consumerName)
-    val verifier = setupVerifier(interaction, provider, consumer)
 
     val failures = mutableMapOf<String, Any>()
     verifier.verifyResponseByInvokingProviderMethods(provider, consumer, interaction, interaction.description,
@@ -48,8 +47,10 @@ open class AmqpTarget @JvmOverloads constructor(val packagesToScan: List<String>
     }
   }
 
-  override fun setupVerifier(interaction: Interaction, provider: ProviderInfo,
-                             consumer: ConsumerInfo): ProviderVerifier {
+  override fun setupVerifier(interaction: Interaction, source: PactSource,
+                             consumerName: String): ProviderVerifier {
+    val provider = getProviderInfo(source)
+    val consumer = ConsumerInfo(consumerName)
     val verifier = ProviderVerifier()
     verifier.projectClasspath = Supplier<Array<URL>> { this.classPathUrls() }
     val defaultProviderMethodInstance = verifier.providerMethodInstance
@@ -85,10 +86,10 @@ open class AmqpTarget @JvmOverloads constructor(val packagesToScan: List<String>
 
     if (source is PactBrokerSource<*>) {
       val (_, _, pacts) = source
-      providerInfo.consumers = pacts.entries.flatMap { e -> e.value.map { p -> ConsumerInfo(e.key.name, p) } }
+      providerInfo.consumers = pacts.entries.flatMap { e -> e.value.map { p -> ConsumerInfo(e.key.name) } }
     } else if (source is DirectorySource<*>) {
       val (_, pacts) = source
-      providerInfo.consumers = pacts.entries.map { e -> ConsumerInfo(e.value.consumer.name, e.value) }
+      providerInfo.consumers = pacts.entries.map { e -> ConsumerInfo(e.value.consumer.name) }
     }
 
     return providerInfo

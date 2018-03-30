@@ -2,6 +2,7 @@ package au.com.dius.pact.provider.junit.target;
 
 import au.com.dius.pact.model.Interaction;
 import au.com.dius.pact.model.PactSource;
+import au.com.dius.pact.model.Provider;
 import au.com.dius.pact.provider.ProviderVerifier;
 
 import java.util.function.BiConsumer;
@@ -20,10 +21,14 @@ public interface Target {
      * @param interaction interaction to be tested
      * @param source Source of the Pact interaction
      */
-    void testInteraction(String consumer, Interaction interaction, PactSource source);
+    void testInteraction(String consumer, Interaction interaction, PactSource source, ProviderVerifier verifier);
 
     /**
      * Add a callback to receive the test interaction result
      */
     void addResultCallback(BiConsumer<Boolean, ProviderVerifier> callback);
+
+
+    ProviderVerifier setupVerifier(Interaction interaction, PactSource source,
+            String consumerName);
 }

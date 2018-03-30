@@ -26,6 +26,7 @@ trait VerifierReporter {
   abstract void warnPactFileHasNoInteractions(Pact pact)
   abstract void interactionDescription(Interaction interaction)
   abstract void stateForInteraction(String state, ProviderInfo provider, ConsumerInfo consumer, boolean isSetup)
+  abstract void missingStateChangeMethod(String state)
   abstract void warnStateChangeIgnored(String state, ProviderInfo providerInfo, ConsumerInfo consumerInfo)
   @SuppressWarnings('ParameterCount')
   abstract void stateChangeRequestFailedWithException(String state, ProviderInfo providerInfo,

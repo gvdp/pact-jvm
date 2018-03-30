@@ -109,10 +109,8 @@ public class HttpTarget extends BaseTarget {
      * {@inheritDoc}
      */
     @Override
-    public void testInteraction(final String consumerName, final Interaction interaction, PactSource source) {
+    public void testInteraction(final String consumerName, final Interaction interaction, PactSource source, ProviderVerifier verifier) {
       ProviderInfo provider = getProviderInfo(source);
-      ConsumerInfo consumer = new ConsumerInfo(consumerName);
-      ProviderVerifier verifier = setupVerifier(interaction, provider, consumer);
 
       Map<String, Object> failures = new HashMap<>();
       ProviderClient client = new ProviderClient(provider, new HttpClientFactory());
@@ -130,9 +128,12 @@ public class HttpTarget extends BaseTarget {
     }
 
     @Override
-    protected ProviderVerifier setupVerifier(Interaction interaction, ProviderInfo provider,
-                                             ConsumerInfo consumer) {
+    public ProviderVerifier setupVerifier(Interaction interaction, PactSource source,
+                                             String consumerName) {
     ProviderVerifier verifier = new ProviderVerifier();
+    ProviderInfo provider = getProviderInfo(source);
+
+    ConsumerInfo consumer = new ConsumerInfo(consumerName);
 
     setupReporters(verifier, provider.getName(), interaction.getDescription());
 

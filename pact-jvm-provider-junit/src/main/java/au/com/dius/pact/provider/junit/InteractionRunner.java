@@ -5,8 +5,11 @@ import au.com.dius.pact.model.PactSource;
 import au.com.dius.pact.model.ProviderState;
 import au.com.dius.pact.model.Interaction;
 import au.com.dius.pact.model.Pact;
+import au.com.dius.pact.provider.ConsumerInfo;
+import au.com.dius.pact.provider.ProviderInfo;
 import au.com.dius.pact.provider.ProviderVerifier;
 import au.com.dius.pact.provider.ProviderVerifierKt;
+import au.com.dius.pact.provider.junit.target.HttpTarget;
 import au.com.dius.pact.provider.junit.target.Target;
 import au.com.dius.pact.provider.junit.target.TestClassAwareTarget;
 import au.com.dius.pact.provider.junit.target.TestTarget;
@@ -226,15 +229,17 @@ public class InteractionRunner extends Runner {
       }
       final Target target = lookupTarget(testInstance);
 
-      Statement statement = new Statement() {
+        ProviderVerifier verifier = target.setupVerifier(interaction, source, pact.getConsumer().getName());
+
+        Statement statement = new Statement() {
           @Override
           public void evaluate() throws Throwable {
             setupTargetForInteraction(target);
             target.addResultCallback((result, verifier) -> results.put(interaction, new Pair<>(result, verifier)));
-            target.testInteraction(pact.getConsumer().getName(), interaction, source);
+            target.testInteraction(pact.getConsumer().getName(), interaction, source, verifier);
           }
       };
-      statement = withStateChanges(interaction, testInstance, statement);
+      statement = withStateChanges(interaction, testInstance, statement, verifier);
       statement = withBefores(interaction, testInstance, statement);
       statement = withRules(interaction, testInstance, statement);
       statement = withAfters(interaction, testInstance, statement);
@@ -253,7 +258,7 @@ public class InteractionRunner extends Runner {
     return target;
   }
 
-  protected Statement withStateChanges(final Interaction interaction, final Object target, final Statement statement) {
+  protected Statement withStateChanges(final Interaction interaction, final Object target, final Statement statement, ProviderVerifier verifier) {
         if (!interaction.getProviderStates().isEmpty()) {
           Statement stateChange = statement;
           for (ProviderState state: interaction.getProviderStates()) {
@@ -261,6 +266,7 @@ public class InteractionRunner extends Runner {
               .stream().filter(ann -> ArrayUtils.contains(ann.getAnnotation(State.class).value(), state.getName()))
               .collect(Collectors.toList());
             if (methods.isEmpty()) {
+                verifier.reportMissingStateChangeMethod(state.getName());
               return new Fail(new MissingStateChangeMethod("MissingStateChangeMethod: Did not find a test class method annotated with @State(\""
                 + state.getName() + "\")"));
             } else {

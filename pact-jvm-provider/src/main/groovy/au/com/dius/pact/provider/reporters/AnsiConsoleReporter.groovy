@@ -73,6 +73,13 @@ class AnsiConsoleReporter implements VerifierReporter {
   }
 
   @Override
+  void missingStateChangeMethod(String state){
+    AnsiConsole.out().println(Ansi.ansi().a('         ').fg(Ansi.Color.RED)
+            .a("WARNING: Missing stage change method with name ${state}")
+            .reset())
+  }
+
+  @Override
   void warnStateChangeIgnored(String state, ProviderInfo providerInfo, ConsumerInfo consumerInfo) {
     AnsiConsole.out().println(Ansi.ansi().a('         ').fg(Ansi.Color.YELLOW)
       .a('WARNING: State Change ignored as there is no stateChange URL')
